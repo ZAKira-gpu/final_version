@@ -30,8 +30,9 @@ class _CustomFooterState extends State<CustomFooter> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    const backgroundColor = Color(0xFF041C1C);
     const textColor = Color(0xFFCCE8DA);
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isMobile = screenWidth < 700;
 
     return AnimatedBuilder(
       animation: _controller,
@@ -44,102 +45,39 @@ class _CustomFooterState extends State<CustomFooter> with SingleTickerProviderSt
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFF5ea092), // Primary Zaki color
-                  Color(0xFF2c5952), // Darker complement for depth
-                ],
+                colors: [Color(0xFF5ea092), Color(0xFF2c5952)],
               ),
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 48),
+            padding: EdgeInsets.symmetric(
+              horizontal: isMobile ? 16 : 32,
+              vertical: isMobile ? 32 : 48,
+            ),
             child: Column(
               children: [
-                const SizedBox(height: 120),
-
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Left: Main CTA text
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: const [
-                              Text(
-                                "Let’s work together!",
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                  color: textColor,
-                                ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                "I'm available for Freelancing",
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 18,
-                                  color: textColor,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        // Middle: Curved horizontal divider (longer and responsive)
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            double curveWidth = constraints.maxWidth * 0.15; // 15% of available width
-                            return SizedBox(
-                              width: curveWidth.clamp(100, 200), // Keep it between 100 and 200 px
-                              height: 160,
-                              child: CustomPaint(
-                                painter: AnimatedCurvePainter(animation: _controller),
-                              ),
-                            );
-                          },
-                        ),
-
-                        // Right: Contact info & socials
-                        Expanded(
-                          flex: 2,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              const Text(
-                                "- Contact Info -",
-                                style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16,
-                                  color: textColor,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              contactItem(Icons.email, "zakira-cpu@outlook.fr"),
-                              contactItem(Icons.phone, "+213 5572 57137"),
-                              const SizedBox(height: 16),
-
-                              Wrap(
-                                spacing: 12,
-                                children: [
-                                  hoverableIcon(FontAwesomeIcons.github, "https://github.com/ZAKira-gpu"),
-                                  hoverableIcon(FontAwesomeIcons.linkedinIn, "https://www.linkedin.com/in/mohammed-chaib-draa-855535285/"),
-                                  hoverableIcon(FontAwesomeIcons.stackOverflow, "https://stackoverflow.com/users/30758702/hi-im-zaki"),
-                                  hoverableIcon(FontAwesomeIcons.medium, "https://medium.com/@mohammedchaib26"),
-                                  hoverableIcon(FontAwesomeIcons.discord, "https://discord.com/users/yourid"),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
-                  },
+                const SizedBox(height: 80),
+                isMobile
+                    ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    sectionHeader(),
+                    const SizedBox(height: 24),
+                    curvedDivider(),
+                    const SizedBox(height: 24),
+                    contactAndSocials(isMobile: true),
+                  ],
+                )
+                    : Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(flex: 2, child: sectionHeader()),
+                    SizedBox(
+                      width: screenWidth * 0.15,
+                      height: 160,
+                      child: CustomPaint(painter: AnimatedCurvePainter(animation: _controller)),
+                    ),
+                    Expanded(flex: 2, child: contactAndSocials(isMobile: false)),
+                  ],
                 ),
-
                 const SizedBox(height: 32),
                 const Divider(color: Color(0xFF3A4F4F)),
                 const SizedBox(height: 12),
@@ -160,17 +98,85 @@ class _CustomFooterState extends State<CustomFooter> with SingleTickerProviderSt
     );
   }
 
+  Widget sectionHeader() {
+    return const Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Let’s work together!",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFFCCE8DA),
+          ),
+        ),
+        SizedBox(height: 8),
+        Text(
+          "I'm available for Freelancing",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 18,
+            color: Color(0xFFCCE8DA),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget curvedDivider() {
+    return SizedBox(
+      height: 120,
+      width: 160,
+      child: CustomPaint(painter: AnimatedCurvePainter(animation: _controller)),
+    );
+  }
+
+  Widget contactAndSocials({required bool isMobile}) {
+    return Column(
+      crossAxisAlignment: isMobile ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+      children: [
+        const Text(
+          "- Contact Info -",
+          style: TextStyle(
+            fontFamily: 'Montserrat',
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            color: Color(0xFFCCE8DA),
+          ),
+        ),
+        const SizedBox(height: 8),
+        contactItem(Icons.email, "zakira-cpu@outlook.fr"),
+        contactItem(Icons.phone, "+213 5572 57137"),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 12,
+          alignment: isMobile ? WrapAlignment.start : WrapAlignment.end,
+          children: [
+            hoverableIcon(FontAwesomeIcons.github, "https://github.com/ZAKira-gpu"),
+            hoverableIcon(FontAwesomeIcons.linkedinIn, "https://www.linkedin.com/in/mohammed-chaib-draa-855535285/"),
+            hoverableIcon(FontAwesomeIcons.stackOverflow, "https://stackoverflow.com/users/30758702/hi-im-zaki"),
+            hoverableIcon(FontAwesomeIcons.medium, "https://medium.com/@mohammedchaib26"),
+            hoverableIcon(FontAwesomeIcons.discord, "https://discord.com/users/yourid"),
+          ],
+        ),
+      ],
+    );
+  }
+
   static Widget contactItem(IconData icon, String text) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, color: Color(0xFFCCE8DA), size: 16),
           const SizedBox(width: 8),
-          Text(
-            text,
-            style: const TextStyle(color: Color(0xFFCCE8DA), fontFamily: 'Montserrat'),
+          Flexible(
+            child: Text(
+              text,
+              style: const TextStyle(color: Color(0xFFCCE8DA), fontFamily: 'Montserrat'),
+            ),
           ),
         ],
       ),
@@ -197,7 +203,7 @@ class _CustomFooterState extends State<CustomFooter> with SingleTickerProviderSt
   }
 }
 
-// Curved top border
+// Top curve clipper
 class TopCurveClipper extends CustomClipper<Path> {
   final double progress;
   TopCurveClipper({required this.progress});
@@ -229,7 +235,7 @@ class TopCurveClipper extends CustomClipper<Path> {
   bool shouldReclip(covariant TopCurveClipper oldClipper) => true;
 }
 
-// Animated curved horizontal divider (left to right)
+// Curve painter
 class AnimatedCurvePainter extends CustomPainter {
   final Animation<double> animation;
   AnimatedCurvePainter({required this.animation}) : super(repaint: animation);
