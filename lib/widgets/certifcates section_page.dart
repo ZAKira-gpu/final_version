@@ -168,12 +168,12 @@ class _HoverCardState extends State<HoverCard> {
             children: [
               ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
-                child: Image.network(
+                child: Image.asset(
                   widget.imageUrl,
-                  height: 300, // larger height
+                  height: 300,
                   width: MediaQuery.of(context).size.width < 700
-                      ? double.infinity // full width on mobile
-                      : MediaQuery.of(context).size.width * 0.8, // 60% of screen on desktop
+                      ? double.infinity
+                      : MediaQuery.of(context).size.width * 0.8,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) => Container(
                     height: 250,
@@ -181,7 +181,7 @@ class _HoverCardState extends State<HoverCard> {
                     alignment: Alignment.center,
                     child: const Icon(Icons.broken_image, size: 40, color: Colors.grey),
                   ),
-                ),
+                )
               ),
               Padding(
                 padding: const EdgeInsets.all(20),
